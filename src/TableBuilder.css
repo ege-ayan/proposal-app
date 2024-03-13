@@ -6,6 +6,7 @@
 }
 
 .input-container {
+  
   margin-bottom: 10px;
 }
 
@@ -32,6 +33,7 @@
 }
 
 .category-container {
+  
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 20px; /* Increase margin for better separation */
@@ -103,3 +105,26 @@
   text-align: left;
   color: white;
 }
+
+.category-container {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+
+.category-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.button-container button {
+  margin: 0 5px;
+}
+

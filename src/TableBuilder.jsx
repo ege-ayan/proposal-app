@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './TableBuilder.css';
 
+
 const TableBuilder = () => {
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState('');
@@ -24,7 +25,7 @@ const TableBuilder = () => {
   const saveData = async () => {
     try {
       const response = await fetch('data.json', {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -108,49 +109,56 @@ const TableBuilder = () => {
       </div>
       <div>
         {categories.map((category, index) => (
-          <div key={index} className="category-container">
-            <span>{category.name}</span>
-            <button className="delete-button" onClick={() => handleDeleteCategory(index)}>Delete</button>
-            <button className="add-button" onClick={() => handleAddRow(index)}>Add Row</button>
-            <button className="add-button" onClick={() => handleAddColumn(index)}>Add Column</button>
-            <table className="category-table" key={index}>
-              <thead>
-                <tr>
-                  {category.columns.map((column, columnIndex) => (
-                    <th key={columnIndex}>{column.name}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {category.rows.map((row, rowIndex) => (
-                  <tr key={row.id}>
-                    {category.columns.map((column, colIndex) => (
-                      <td key={colIndex}>
-                        {colIndex === 0 ? (
-                          <input
-                            type="text"
-                            value={row.name || ''}
-                            onChange={(e) => {
-                              const updatedCategories = [...categories];
-                              updatedCategories[index].rows[rowIndex].name = e.target.value;
-                              setCategories(updatedCategories);
-                              saveData();
-                            }}
-                          />
-                        ) : (
-                          <input
-                            type="text"
-                            value={row.values[column.name] || ''}
-                            onChange={(e) => handleCellValueChange(index, rowIndex, column.name, e.target.value)}
-                          />
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+         <div key={index} className="category-container">
+         <div className="category-header">
+           <h3>{category.name}</h3>
+           <div className="button-container">
+           <button className="add-button" onClick={() => handleAddRow(index)}>Add Row</button>
+           <button className="add-button" onClick={() => handleAddColumn(index)}>Add Column</button>
+           <button className="delete-button" onClick={() => handleDeleteCategory(index)}>Delete</button>
+         </div>
+        
+         
+         <table className="category-table" key={index}>
+           <thead>
+             <tr>
+               {category.columns.map((column, columnIndex) => (
+                 <th key={columnIndex}>{column.name}</th>
+               ))}
+             </tr>
+           </thead>
+           <tbody>
+             {category.rows.map((row, rowIndex) => (
+               <tr key={row.id}>
+                 {category.columns.map((column, colIndex) => (
+                   <td key={colIndex}>
+                     {colIndex === 0 ? (
+                       <input
+                         type="text"
+                         value={row.name || ''}
+                         onChange={(e) => {
+                           const updatedCategories = [...categories];
+                           updatedCategories[index].rows[rowIndex].name = e.target.value;
+                           setCategories(updatedCategories);
+                           saveData();
+                         }}
+                       />
+                     ) : (
+                       <input
+                         type="text"
+                         value={row.values[column.name] || ''}
+                         onChange={(e) => handleCellValueChange(index, rowIndex, column.name, e.target.value)}
+                       />
+                     )}
+                   </td>
+                 ))}
+               </tr>
+             ))}
+           </tbody>
+         </table>
+       </div>
+       </div>
+        
         ))}
       </div>
       <button className="submit-button" onClick={handleSubmit}>Submit</button>
