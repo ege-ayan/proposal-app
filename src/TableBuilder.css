@@ -1,0 +1,105 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.input-container {
+  margin-bottom: 10px;
+}
+
+.input-container input {
+  padding: 8px;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.input-container button {
+  padding: 8px 15px;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.input-container button:hover {
+  background-color: #0056b3;
+}
+
+.category-container {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 20px; /* Increase margin for better separation */
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.category-container span {
+  flex: 1;
+  font-size: 18px;
+  font-weight: bold; /* Make category title bold */
+  text-align: center; /* Center-align category title */
+}
+
+.category-container button {
+  padding: 8px 15px; /* Make button size consistent */
+  margin-left: 10px;
+  border-radius: 5px;
+  background-color: #007bff; /* Blue color for add row and add column buttons */
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.category-container button.delete-button {
+  background-color: #dc3545; /* Red color for delete button */
+}
+
+.category-container button:hover {
+  background-color: #0056b3;
+}
+
+.category-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.category-table th, .category-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.category-table th {
+  text-align: left;
+  background-color: #f2f2f2;
+  color: black;
+  font-weight: bold;
+}
+
+.generated-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.generated-table th, .generated-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.generated-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  color: black;
+}
+
+.generated-table td {
+  text-align: left;
+  color: white;
+}
