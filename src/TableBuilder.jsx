@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './TableBuilder.css';
-
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const TableBuilder = () => {
   const [categories, setCategories] = useState([]);
@@ -40,6 +41,34 @@ const TableBuilder = () => {
       console.error('Error saving data:', error);
     }
   };
+
+
+  const handleExportToPDF = () => {
+    const doc = new jsPDF();
+  
+    categories.forEach((category, index) => {
+      const tableData = category.rows.map(row => {
+        const rowData = [row.name]; // Include the row name as the first element
+        category.columns.forEach(column => {
+          rowData.push(row.values[column.name]);
+        });
+        return rowData;
+      });
+  
+      doc.autoTable({
+        head: [category.columns.map(column => column.name)],
+        body: tableData,
+        startY: index === 0 ? 10 : doc.previousAutoTable.finalY + 10
+      });
+  
+      if (index < categories.length - 1) {
+        doc.addPage();
+      }
+    });
+  
+    doc.save('tables.pdf');
+  };
+  
 
   const handleAddCategory = () => {
     if (newCategory.trim() !== '') {
@@ -162,6 +191,7 @@ const TableBuilder = () => {
         ))}
       </div>
       <button className="submit-button" onClick={handleSubmit}>Submit</button>
+      <button onClick={handleExportToPDF}>Download PDF</button>
       {submitted && (
         <div>
           <h2>Generated Table</h2>
