@@ -45,29 +45,32 @@ const TableBuilder = () => {
 
   const handleExportToPDF = () => {
     const doc = new jsPDF();
+
+    // Add title to the PDF
+    doc.text('Generated Tables', 10, 10);
   
+    // Loop through categories and add tables to the PDF
     categories.forEach((category, index) => {
-      const tableData = category.rows.map(row => {
-        const rowData = [row.name]; // Include the row name as the first element
+      const bodyData = category.rows.map(row => {
+        const rowData = [row.name || '']; // Add the first element of the row
         category.columns.forEach(column => {
-          rowData.push(row.values[column.name]);
+          rowData.push(row.values[column.name] || ''); // Add other column values
         });
         return rowData;
       });
   
       doc.autoTable({
+        startY: 20 + index * 100, // Adjust startY position based on index
         head: [category.columns.map(column => column.name)],
-        body: tableData,
-        startY: index === 0 ? 10 : doc.previousAutoTable.finalY + 10
+        body: bodyData,
       });
-  
-      if (index < categories.length - 1) {
-        doc.addPage();
-      }
     });
   
-    doc.save('tables.pdf');
+    // Save the PDF
+    doc.save('generated_tables.pdf');
   };
+
+
   
 
   const handleAddCategory = () => {
