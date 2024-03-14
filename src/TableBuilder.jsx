@@ -50,9 +50,6 @@ const TableBuilder = () => {
     const doc = new jsPDF();
   
     categories.forEach((category, categoryIndex) => {
-      if (categoryIndex !== 0) {
-        doc.addPage();
-      }
       
       // Add category title
       doc.text(category.name, 10, 10);
