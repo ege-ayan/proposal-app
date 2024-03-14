@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './TableBuilder.css';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 const TableBuilder = () => {
   const [categories, setCategories] = useState([]);
@@ -43,33 +44,77 @@ const TableBuilder = () => {
   };
 
 
-  const handleExportToPDF = () => {
-    const doc = new jsPDF();
 
-    // Add title to the PDF
-    doc.text('Generated Tables', 10, 10);
+
+  const handleExportToPDF = async () => {
+    const doc = new jsPDF();
   
-    // Loop through categories and add tables to the PDF
-    categories.forEach((category, index) => {
-      const bodyData = category.rows.map(row => {
-        const rowData = [row.name || '']; // Add the first element of the row
-        category.columns.forEach(column => {
-          rowData.push(row.values[column.name] || ''); // Add other column values
-        });
-        return rowData;
-      });
-  
+    categories.forEach((category, categoryIndex) => {
+      if (categoryIndex !== 0) {
+        doc.addPage();
+      }
+      
+      // Add category title
+      doc.text(category.name, 10, 10);
+      
+      // Select the table element for the category
+      const table = document.querySelector(`#category-table-${categoryIndex}`);
+      
+      // Generate PDF from the table using jspdf-autotable
       doc.autoTable({
-        startY: 20 + index * 100, // Adjust startY position based on index
-        head: [category.columns.map(column => column.name)],
-        body: bodyData,
+        html: table,
+        theme: 'grid', // Theme style
+        styles: { // Global styles
+          fontSize: 10,
+        },
+        headStyles: { // Styles for table header
+          fillColor: [255, 0, 0], // Blue color fill
+        },
+        bodyStyles: { // Styles for table body
+           
+          fillColor: [255, 255, 255],// Red color text
+          textColor: [0, 0, 0]
+        },
+        footStyles: { // Styles for table footer
+          fontStyle: 'italic', // Italic font style
+        },
+        alternateRowStyles: { // Styles for alternate rows
+          textColor: [0, 0, 0], // Yellow color fill
+        },
+        columnStyles: { // Styles for specific columns
+          0: { fontStyle: 'bold' }, // Bold font style for column index 0
+        },
       });
+      // Add some vertical distance
+      doc.text('', 10, 70); // You can adjust the Y-coordinate for the desired distance
     });
   
-    // Save the PDF
-    doc.save('generated_tables.pdf');
+    const generatedPDFBytes = doc.output('arraybuffer');
+    const existingPDFBytes = await fetch('infinia.pdf').then((res) => res.arrayBuffer());
+  
+    const generatedPDFDoc = await PDFDocument.load(generatedPDFBytes);
+    const existingPDFDoc = await PDFDocument.load(existingPDFBytes);
+  
+    // Copy pages from generated PDF to existing PDF
+    const copiedPages = await existingPDFDoc.copyPages(generatedPDFDoc, generatedPDFDoc.getPageIndices());
+    copiedPages.forEach((page) => {
+      existingPDFDoc.insertPage(6, page); // Insert at page 7 (zero-based index)
+    });
+  
+    // Save the modified PDF with the new pages added
+    const modifiedPDFBytes = await existingPDFDoc.save();
+  
+    // Create a Blob from modified PDF bytes
+    const blob = new Blob([modifiedPDFBytes], { type: 'application/pdf' });
+  
+    // Create a temporary anchor element to download the modified PDF
+    const downloadLink = document.createElement('a');
+    downloadLink.href = window.URL.createObjectURL(blob);
+    downloadLink.download = 'modified_pdf_with_tables.pdf';
+  
+    // Simulate a click on the anchor element to trigger the download
+    downloadLink.click();
   };
-
 
   
 
@@ -201,7 +246,7 @@ const TableBuilder = () => {
           {categories.map((category, categoryIndex) => (
             <div key={categoryIndex}>
               <h3>{category.name}</h3>
-              <table className="generated-table">
+              <table id={`category-table-${categoryIndex}`} className="generated-table" key={categoryIndex}>
                 <thead>
                   <tr>
                     {category.columns.map((column, columnIndex) => (
